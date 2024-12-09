@@ -1,0 +1,19 @@
+---
+- name: Installer vim et vérifier /etc/passwd
+  hosts: all
+  remote_user: vagrant
+  become: true
+  become_user: root
+
+  tasks:
+    - name: Install apache2
+      ansible.builtin.apt:
+        update_cache: yes
+        name: apache2
+        state: present
+    - name: Install start
+      ansible.builtin.service:
+        name: apache2
+        state: started
+
+
