@@ -1,0 +1,28 @@
+---
+- name: Installer vim et vérifier /etc/passwd
+  hosts: all
+  remote_user: vagrant
+  become: true
+  become_user: root
+
+  tasks:
+    - name: Install apache2 mysql-server
+      ansible.builtin.apt:
+        update_cache: yes
+        name: "{{ item }}"
+        state: present
+      loop:
+        - apache2
+        - mysql-server  
+
+    - name: Gather the rpm package facts
+      ansible.builtin.package_facts:
+        manager: auto
+
+    - name: Check whether a package called apache2 is installed
+      ansible.builtin.replace:
+        path: /var/www/html/index.html
+        regexp: '^$'
+        replace: "Bonjour depuis Ansible"
+      when: "'apache2' in ansible_facts.packages"      
+
