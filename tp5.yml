@@ -1,0 +1,22 @@
+---
+- name: Installer et configurer docker
+  hosts: all
+  remote_user: vagrant
+  become: true
+  become_user: root
+
+
+  tasks:
+    - name: include tp3
+      include_tasks: tp3_include.yml
+
+    - name: include tp4
+      include_tasks: tp4.yml
+
+    - name: write in /etc/last_changed
+      ansible.builtin.lineinfile:
+        path: /etc/last_changed
+        line: "Aujourd'hui le {{ ansible_date_time.day }} à {{ansible_date_time.hour}}"
+        create: yes   
+        
+

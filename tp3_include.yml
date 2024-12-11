@@ -1,0 +1,52 @@
+- name: Install apache2 mysql-server
+      ansible.builtin.apt:
+        update_cache: yes
+        name: "{{ item }}"
+        state: present
+      loop:
+        - apache2
+        - mysql-server  
+      when: (ansible_hostname == "node1") or (ansible_hostname == "node2")
+
+    - name: Install git nginx cowsay
+      ansible.builtin.apt:
+        update_cache: yes
+        name: "{{ item }}"
+        state: present
+      loop:
+        - git
+        - nginx
+        - cowsay
+      when: (ansible_hostname == "node3")
+
+    - name: Check whether a package called ufw is installed
+      ansible.builtin.apt:
+        update_cache: yes
+        name: ufw
+        state: present
+      when: (ansible_facts['distribution'] == "Ubuntu")
+
+    - name: Gather the rpm package facts
+      ansible.builtin.package_facts:
+        manager: auto 
+    
+    - name: Copy fichier index 
+      ansible.builtin.copy:
+        src: files/index.html
+        dest: /var/www/html/index.html
+      when: ('apache2' in ansible_facts.packages) or ('nginx' in ansible_facts.packages)
+
+    - name: Add a line to a file if the file does not exist, without passing regexp
+      ansible.builtin.lineinfile:
+        path: /var/www/html/index.html
+        line: " {{ ansible_hostname }}"
+        create: yes
+      when: ('apache2' in ansible_facts.packages) or ('nginx' in ansible_facts.packages) 
+     
+    - name: write in /etc/jour
+      ansible.builtin.template:
+        src: templates/day.j2
+        dest: /etc/jour
+        mode: '0644'
+
+
