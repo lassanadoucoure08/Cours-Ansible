@@ -20,9 +20,8 @@
         manager: auto
 
     - name: Check whether a package called apache2 is installed
-      ansible.builtin.replace:
-        path: /var/www/html/index.html
-        regexp: '^$'
-        replace: "Bonjour depuis Ansible"
+      ansible.builtin.copy:
+        src: /home/user/files/fichier
+        dest: /var/www/html/index.html
       when: "'apache2' in ansible_facts.packages"      
 
